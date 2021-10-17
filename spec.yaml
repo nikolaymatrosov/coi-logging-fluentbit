@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  logs:
+    container_name: logs-app
+    image: cr.yandex/crpk28lsfu91rns28316/dockerlogtest:2021.10.17-6166ecb
+    restart: always
+    depends_on:
+      - fluentbit
+    logging:
+      # Fluent-bit понимает логи в этом формате
+      driver: fluentd
+      options:
+        # куда посылать лог-сообщения, необходимо что бы адрес
+        # совпадал с настройками плагина forward
+        fluentd-address: localhost:24224
+        # теги используются для маршрутизации лог-сообщений, тема
+        # маршрутизации будет рассмотрена ниже
+        tag: app.logs
+
+  fluentbit:
+    container_name: fluentbit
+    image: cr.yandex/yc/fluent-bit-plugin-yandex:v1.0.3-fluent-bit-1.8.6
+    ports:
+      - 24224:24224
+      - 24224:24224/udp
+    restart: always
+    environment:
+      YC_GROUP_ID: e23j5q1nhth94apeduuh
+    volumes:
+      - /etc/fluentbit/fluentbit.conf:/fluent-bit/etc/fluent-bit.conf
+      - /etc/fluentbit/parsers.conf:/fluent-bit/etc/parsers.conf
