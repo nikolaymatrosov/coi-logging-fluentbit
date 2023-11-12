@@ -30,6 +30,9 @@ write_files:
           level_key       severity
           default_level   WARN
           authorization   instance-service-account
+          resource_type   vm
+          resource_id     {{instance/hostname}}
+          stream_name     {container_name}
     path: /etc/fluentbit/fluentbit.conf
   - content: |
       [PARSER]
@@ -40,9 +43,9 @@ write_files:
     path: /etc/fluentbit/parsers.conf
 
 users:
-  - name: username
+  - name: yc-user
     groups: sudo
     shell: /bin/bash
     sudo: [ 'ALL=(ALL) NOPASSWD:ALL' ]
     ssh-authorized-keys:
-      - ssh-rsa AAAA
+      - ${SSH_PUBLIC_KEY}
