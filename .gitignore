@@ -143,3 +143,4 @@ cython_debug/
 .terraform
 .terraform.lock.hcl
 environment
+sa.json
